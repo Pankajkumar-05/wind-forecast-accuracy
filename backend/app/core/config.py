@@ -7,6 +7,9 @@ from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+PRODUCTION_FRONTEND_ORIGIN = "https://wind-forecast-accuracy.vercel.app"
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -69,7 +72,17 @@ class Settings(BaseSettings):
 
     @property
     def cors_origin_list(self) -> list[str]:
-        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+        """Allowed browser origins: the CORS_ORIGINS env var plus the production frontend, always.
+
+        Origins are normalised (whitespace and trailing slash removed, since browsers send none) and
+        de-duplicated. The production origin is appended even if the env var is missing or wrong.
+        """
+        configured = [origin.strip().rstrip("/") for origin in self.cors_origins.split(",") if origin.strip()]
+        origins: list[str] = []
+        for origin in [*configured, PRODUCTION_FRONTEND_ORIGIN]:
+            if origin != "*" and origin not in origins:  # never allow a wildcard origin
+                origins.append(origin)
+        return origins
 
 
 @lru_cache
