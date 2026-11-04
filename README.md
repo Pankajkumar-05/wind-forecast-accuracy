@@ -1,6 +1,6 @@
 # Wind Forecast Accuracy — Day-Ahead Purchasing Dashboard
 
-A web app that helps a UK energy utility's day-ahead buying team answer two questions about national wind generation:
+A web app that helps a Uk energy utility's day-ahead buying team answer two questions about national wind generation:
 
 1. **What was the latest wind forecast available when the day-ahead purchase decision had to be made?**
 2. **How accurate have those forecasts been?**
